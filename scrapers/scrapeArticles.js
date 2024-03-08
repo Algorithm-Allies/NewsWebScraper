@@ -55,34 +55,36 @@ const turlockJournalScraper = async () => {
         .find("span")
         .attr("data-page-tracker-analytics-payload")
     );
-    const author = jsonData.page_meta.author || paragraphs[0];
+
     const date = jsonData.page_meta.page_created_at_pretty;
+    if (date === "March 06, 2024") {
+      const author = jsonData.page_meta.author || paragraphs[0];
+      // Saving data to an object I will push to the array of objects.
+      objectToPush["source"] = source;
+      objectToPush["publisher"] = publisher;
+      objectToPush["heading"] = heading.trim();
+      objectToPush["subHeading"] = subHeading;
+      objectToPush["author"] = author;
+      objectToPush["date"] = date;
 
-    // Saving data to an object I will push to the array of objects.
-    objectToPush["source"] = source;
-    objectToPush["publisher"] = publisher;
-    objectToPush["heading"] = heading.trim();
-    objectToPush["subHeading"] = subHeading;
-    objectToPush["author"] = author;
-    objectToPush["date"] = date;
-
-    // Getting the image data and saving that to objectToPush
-    const image = {};
-    $("div.anvil-images__image-container").each((i, element) => {
-      const currentImage = $(element)
-        .find("img.anvil-images__background--glass")
-        .attr("src");
-      const imageAlt = $(element)
-        .find("img.anvil-images__background--glass")
-        .attr("alt");
-      image["url"] = currentImage;
-      image["alt"] = imageAlt;
+      // Getting the image data and saving that to objectToPush
+      const image = {};
+      $("div.anvil-images__image-container").each((i, element) => {
+        const currentImage = $(element)
+          .find("img.anvil-images__background--glass")
+          .attr("src");
+        const imageAlt = $(element)
+          .find("img.anvil-images__background--glass")
+          .attr("alt");
+        image["url"] = currentImage;
+        image["alt"] = imageAlt;
+        objectToPush["img"] = image;
+      });
       objectToPush["img"] = image;
-    });
-    objectToPush["img"] = image;
-    objectToPush["paragraphs"] = filteredParagraphs;
+      objectToPush["paragraphs"] = filteredParagraphs;
 
-    arr.push(objectToPush);
+      arr.push(objectToPush);
+    }
   }
   return arr;
 };
