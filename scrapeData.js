@@ -149,7 +149,7 @@ async function scrapeData(city = "all", proxy = false) {
       }
 
       console.log(`Scraped a Total of ${articles.length} Articles. \n`);
-
+      console.log(articles)
       await writeFile(
         path.join(process.cwd(), "articles.json"),
         JSON.stringify(articles)
