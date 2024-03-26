@@ -211,7 +211,6 @@ const tracyPressScraper = async (proxy = false) => {
     if (objectToPush.paragraphs.length != 0) {
       articles.push(objectToPush);
     }
-    articles.push(objectToPush);
   }
   stopSpinner();
   return articles;
