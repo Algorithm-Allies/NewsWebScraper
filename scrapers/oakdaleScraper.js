@@ -87,14 +87,15 @@ const oakdaleLeaderScraper = async () => {
     const author = jsonData.page_meta.author || paragraphs[0];
     const date = jsonData.page_meta.page_created_at_pretty;
     const image = { src: $image.attr("src"), alt: $image.attr("alt") };
+    const [category, subCategory] = getCategory(urls[i]);
 
     // Saving data to an object I will push to the array of objects.
     objectToPush["source"] = source;
     objectToPush["publisher"] = publisher;
     objectToPush["heading"] = heading.trim();
     objectToPush["subHeading"] = subHeading;
-    objectToPush["category"] = getCategory(urls[i]);
-    objectToPush["subcategory"] = null;
+    objectToPush["category"] = category;
+    objectToPush["subcategory"] = subCategory;
     objectToPush["author"] = author;
     objectToPush["date"] = date;
     objectToPush["img"] = image;
@@ -109,13 +110,35 @@ const oakdaleLeaderScraper = async () => {
 // @ Desc gets categories from url.
 // @ Returns category string.
 function getCategory(url) {
-  let mainCategory = "";
+  let category = "";
+  let subCategory = "";
+
   if (url.includes("https://www.oakdaleleader.com/news/")) {
-    mainCategory = "NEWS";
+    category = "NEWS";
   } else {
-    mainCategory = "SPORTS";
+    category = "SPORTS";
   }
-  return mainCategory;
+
+  let subCategories = {
+    "high-school": ["sports", "HIGH SCHOOL SPORTS"],
+    "local-sports-2": ["sports", "LOCAL SPORTS"],
+    college: ["sports", "COLLEGE SPORTS"],
+    crime: ["news", "CRIME"],
+    government: ["news", "GOVERNMENT"],
+    education: ["news", "EDUCATION"],
+    "local-news": ["news", "LOCAL NEWS"],
+  };
+
+  let keys = Object.keys(subCategories);
+  for (let i = 0; i < keys.length; i++) {
+    if (url.includes(keys[i]) && url.includes(keys[i][1])) {
+      subCategory = subCategories[keys[i]];
+    }
+  }
+  if (!subCategory) {
+    subCategory = null;
+  }
+  return [category, subCategory];
 }
 
 module.exports = { oakdaleLeaderScraper };

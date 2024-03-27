@@ -90,7 +90,7 @@ const modestoBeeScraper = async () => {
     articleObject["publisher"] = publisher;
     articleObject["heading"] = heading;
     articleObject["subheading"] = null;
-    articleObject["category"] = getCategory(urls[i]);
+    articleObject["category"] = getCategory(urls[i])[0];
     articleObject["subcategory"] = subcategory;
     articleObject["author"] = author;
     articleObject["date"] = date;
@@ -108,15 +108,34 @@ const modestoBeeScraper = async () => {
 };
 
 // @ Desc gets categories from url.
-// @ Returns category string.
+// @ Returns categories Array. Main category is index 0, sub is index 1.
 function getCategory(url) {
-  let mainCategory = "";
+  let category;
+  let subCategory = "";
+
   if (url.includes("https://www.modbee.com/news/")) {
-    mainCategory = "NEWS";
+    category = "NEWS";
   } else {
-    mainCategory = "SPORTS";
+    category = "SPORTS";
   }
-  return mainCategory;
+
+  const subCategories = {
+    "high-school": "HIGH SCHOOL SPORTS",
+    "local-sports": "LOCAL SPORTS",
+    college: "COLLEGE SPORTS",
+    crime: "CRIME",
+    government: "GOVERNMENT",
+    education: "EDUCATION",
+    local: "LOCAL NEWS",
+  };
+
+  let keys = subCategories.keys();
+  for (let i = 0; i < keys.length; i++) {
+    if (url.includes(keys[i])) {
+      subCategory = subCategories[keys[i]];
+    }
+  }
+  return [category, subCategory];
 }
 
 module.exports = { modestoBeeScraper };

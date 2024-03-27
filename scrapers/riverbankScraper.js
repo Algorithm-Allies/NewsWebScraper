@@ -113,6 +113,7 @@ function getCategory(url) {
   } else {
     mainCategory = "SPORTS";
   }
+  return mainCategory;
 }
 
 module.exports = { riverbankNewsScraper };

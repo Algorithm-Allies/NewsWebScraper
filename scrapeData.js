@@ -50,6 +50,6 @@ async function scrapeData(city) {
 }
 
 // Updates Scraped Data object and will write to JSON file.
-scrapeData("riverbank");
+scrapeData("oakdale");
 
 module.exports = { scrapeData };
