@@ -13,7 +13,7 @@ const { riponScraper } = require("./scrapers/riponScraper");
 //// FUNCTIONS ////
 // @ desc Scrapes city data or all cities if all is passed as arg.
 // @ returns an array of objects where each object represents an article with the data we need as properties.
-async function scrapeData(city = "all", proxy = false) {
+async function scrapeData(city = "turlock", proxy = false) {
   console.log("\n");
   let articles = [];
   console.time();
