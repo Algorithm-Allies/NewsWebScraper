@@ -158,9 +158,8 @@ async function scrapeData(city = "all", proxy = false) {
   }
   console.log("Wrote Articles to articles.json");
   console.timeEnd();
+  return articles
 }
 
-// Updates Scraped Data object and will write to JSON file.
-scrapeData();
 
 module.exports = { scrapeData };
