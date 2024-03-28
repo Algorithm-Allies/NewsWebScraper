@@ -15,6 +15,10 @@ app.get("/scrape", async (req, res) => {
   }
 });
 
+app.get("/test", (req, res) => {
+  res.send("Server is working!");
+});
+
 // Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
