@@ -1,12 +1,10 @@
 // Imports
 const cheerio = require("cheerio");
-const { fetchWithProxy } = require("../proxyFetch");
 const moment = require("moment");
-const { startSpinner, stopSpinner } = require("../delays");
 
 // @ desc Scrapes Ripon Leader for article URLS.
 // @ returns array of article URLS to scrape.
-const getRiponURLS = async (proxy = false) => {
+const getRiponURLS = async () => {
   console.log("Scraping The Ripon Press");
 
   // An array to populate with thumbnail objects.
@@ -29,7 +27,6 @@ const getRiponURLS = async (proxy = false) => {
   // Getting Category DOM.
 
   console.log("Fetching Category DOMS ");
-  startSpinner();
   edPromise = fetch(edURL).then((res) => res.text());
   localNewsPromise = fetch(localNewsURL).then((res) => res.text());
   highSchoolPromise = fetch(highSchoolURL).then((res) => res.text());
@@ -38,7 +35,6 @@ const getRiponURLS = async (proxy = false) => {
     localNewsPromise,
     highSchoolPromise,
   ]);
-  stopSpinner();
   console.log("Got all Category DOMS");
 
   // Creating cheerio objects.
@@ -66,7 +62,7 @@ const getRiponURLS = async (proxy = false) => {
 };
 // @ desc Scrapes Ripon News
 // @ returns updated Scraped data object with new scraped data.
-const riponScraper = async (proxy = false) => {
+const riponScraper = async () => {
   const articles = [];
 
   // Getting article URLS
@@ -80,14 +76,11 @@ const riponScraper = async (proxy = false) => {
   // Getting article DOMS
   let URLpromises;
   console.log("Getting article DOMS ");
-  startSpinner();
   URLpromises = urls.map((url) => {
     return fetch(url).then((res) => res.text());
   });
   const articleDOMS = await Promise.all(URLpromises);
-  stopSpinner();
   console.log("Got all Article DOMS, Scraping Data... ");
-  startSpinner();
 
   // Iterating over each Ripon article DOM to scrape data.
   for (let i = 0; i < articleDOMS.length; i++) {
@@ -146,7 +139,6 @@ const riponScraper = async (proxy = false) => {
       articles.push(objectToPush);
     }
   }
-  stopSpinner();
   return articles;
 };
 

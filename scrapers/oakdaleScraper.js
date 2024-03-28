@@ -1,15 +1,12 @@
 const cheerio = require("cheerio");
-const { fetchWithProxy } = require("../proxyFetch");
 const moment = require("moment");
-
-const { startSpinner, stopSpinner } = require("../delays");
 
 // Global Variable //
 const subcategoriesObj = {};
 
 // @ desc Scrapes Oakdale Leader for article URLS.
 // @ returns URLS and Thumbnail objects.
-const getOakdaleURLS = async (proxy = false) => {
+const getOakdaleURLS = async () => {
   console.log("Scraping the Oakdale Leader");
 
   // Arrays to return.
@@ -37,7 +34,6 @@ const getOakdaleURLS = async (proxy = false) => {
   let localSportsPromise;
   // Getting Category DOMS
   console.log("Fetching Category DOMS ");
-  startSpinner();
   crimePromise = fetch(crimeURL).then((res) => res.text());
   govPromise = fetch(govURL).then((res) => res.text());
   edPromise = fetch(edURL).then((res) => res.text());
@@ -51,7 +47,6 @@ const getOakdaleURLS = async (proxy = false) => {
       localNewsPromise,
       localSportsPromise,
     ]);
-  stopSpinner();
   console.log("Got all Category DOMS");
 
   // Creating cheerio objects out of DOM strings.
@@ -89,7 +84,7 @@ const getOakdaleURLS = async (proxy = false) => {
 
 // @ desc Scrapes Oakdale Leader
 // @ returns updated Scraped data object with new scraped data.
-const oakdaleLeaderScraper = async (proxy = false) => {
+const oakdaleLeaderScraper = async () => {
   const articles = [];
 
   // Getting article URLS.
@@ -103,15 +98,12 @@ const oakdaleLeaderScraper = async (proxy = false) => {
   // Getting article DOMS
   let URLpromises;
   console.log("Getting article DOMS ");
-  startSpinner();
   URLpromises = urls.map((url) => {
     return fetch(url).then((res) => res.text());
   });
 
   const articleDOMS = await Promise.all(URLpromises);
-  stopSpinner();
   console.log("Got all article DOMS, Scraping data... ");
-  startSpinner();
 
   // Iterating over each DOM in article DOM, and creating article object to push to articles array.
   for (let i = 0; i < articleDOMS.length; i++) {
@@ -171,7 +163,6 @@ const oakdaleLeaderScraper = async (proxy = false) => {
 
     articles.push(objectToPush);
   }
-  stopSpinner();
   return articles;
 };
 

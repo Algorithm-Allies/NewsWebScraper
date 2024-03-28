@@ -1,14 +1,12 @@
 const cheerio = require("cheerio");
-const { fetchWithProxy } = require("../proxyFetch");
 const moment = require("moment");
-const { startSpinner, stopSpinner } = require("../delays");
 
 // GLOBAL VARIABLE///
 const subcategoriesObj = {};
 
 // @ desc Scrapes The Turlock Journal for article URLS.
 // @ returns array of article URLS to scrape.
-const getTurlockURLS = async (proxy = false) => {
+const getTurlockURLS = async () => {
   console.log("Scraping The Turlock Journal");
 
   // Arrays to return.
@@ -41,7 +39,6 @@ const getTurlockURLS = async (proxy = false) => {
 
   // Getting Category DOMS
   console.log("Fetching Category DOMS ");
-  startSpinner();
   crimePromise = fetch(crimeURLS).then((res) => res.text());
   govPromise = fetch(govURLS).then((res) => res.text());
   edPromise = fetch(edURLS).then((res) => res.text());
@@ -57,7 +54,6 @@ const getTurlockURLS = async (proxy = false) => {
       localSportsPromise,
       highSchoolPromise,
     ]);
-  stopSpinner();
   console.log("Got all Category DOMS");
 
   // Creating cheerio objects out of DOM strings.
@@ -100,7 +96,7 @@ const getTurlockURLS = async (proxy = false) => {
 
 // @ desc Scrapes The Turlock Journal
 // @ returns updated Scraped data object with new scraped data.
-const turlockJournalScraper = async (proxy = false) => {
+const turlockJournalScraper = async () => {
   const articles = [];
 
   // Getting article URLS.
@@ -114,14 +110,11 @@ const turlockJournalScraper = async (proxy = false) => {
   // Getting article DOMS
   let URLpromises;
   console.log("Getting article DOMS ");
-  startSpinner();
   URLpromises = urls.map((url) => {
     return fetch(url).then((res) => res.text());
   });
   const articleDOMS = await Promise.all(URLpromises);
-  stopSpinner();
   console.log("Got all article DOMS, Scraping Data... ");
-  startSpinner();
 
   // Iterating over each DOM in article DOM, and creating article object to push to articles array.
   for (let i = 0; i < articleDOMS.length; i++) {
@@ -181,7 +174,6 @@ const turlockJournalScraper = async (proxy = false) => {
 
     articles.push(objectToPush);
   }
-  stopSpinner();
   return articles;
 };
 

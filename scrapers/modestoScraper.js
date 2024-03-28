@@ -1,12 +1,6 @@
 const cheerio = require("cheerio");
 const { fetchWithProxy } = require("../proxyFetch");
 const moment = require("moment");
-const {
-  startSpinner,
-  stopSpinner,
-  smallFetchDelay,
-  fetchDelay,
-} = require("../delays.js");
 
 // Global variable for categorizing articles.
 subcategoriesObj = {};
@@ -42,7 +36,6 @@ const getModestoURLS = async () => {
   let highSchoolPromise;
   // Getting Category DOMS.
   console.log(`Fetching Category DOMS with Proxy `);
-  startSpinner();
   crimePromise = fetchWithProxy(crimeURL);
   govPromise = fetchWithProxy(govURL);
   edPromise = fetchWithProxy(edURL);
@@ -57,7 +50,6 @@ const getModestoURLS = async () => {
       localNewsPromise,
       highSchoolPromise,
     ]);
-  stopSpinner();
   console.log("Got all Category DOMS");
 
   // Creating cheerio objects out of DOM strings.
@@ -110,14 +102,11 @@ const modestoBeeScraper = async () => {
   // Getting article DOMS
   let urlPromises;
   console.log(`Fetching article DOMS with proxy `);
-  startSpinner();
   urlPromises = urls.map((url) => {
     return fetchWithProxy(url);
   });
   const articleDOMS = await Promise.all(urlPromises);
-  stopSpinner();
   console.log("Got all Article DOMS, Scraping data... ");
-  startSpinner();
 
   // Iterating over each article DOM, creating article object, and pushing it to articles array.
   for (let i = 0; i < articleDOMS.length; i++) {
@@ -183,7 +172,6 @@ const modestoBeeScraper = async () => {
       articles.push(articleObject);
     }
   }
-  stopSpinner();
   // Returning articles array.
   return articles;
 };
