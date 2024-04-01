@@ -7,10 +7,18 @@ function filterURLS(urls) {
     return urls;
   }
 
+  const hashmap = {};
+
+  for (let i = 0; i < dbURLS.length; i++) {
+    hashmap[dbURLS[i]] = true;
+  }
+
   // If dbURLS truthy, filter out URLS we already have in db.
-  urls.filter((url) => {
-    return !dbURLS.includes(url);
+  const filteredURLS = urls.filter((url) => {
+    return url in hashmap;
   });
+
+  return filteredURLS;
 }
 
 module.exports = { filterURLS };

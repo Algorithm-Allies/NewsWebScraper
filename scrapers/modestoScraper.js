@@ -4,7 +4,7 @@ const { filterURLS } = require("../filterURLS");
 const moment = require("moment");
 
 // Global variable for categorizing articles.
-subcategoriesObj = {};
+const subcategoriesObj = {};
 
 // @ desc Scrapes The Modesto Bee for Article URLS.
 // @ returns array of article URLS to scrape.
