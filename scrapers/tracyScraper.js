@@ -1,4 +1,7 @@
 const cheerio = require("cheerio");
+const moment = require("moment");
+const { fetchWithProxyTracy } = require("../proxyFetch");
+const { fetchDelay } = require("../delays");
 
 // GLOBAL VARS FOR CATEGORIZING ARTICLES //
 subcategoriesObj = {};
@@ -28,18 +31,22 @@ const getTracyURLS = async () => {
   const highSchoolSportsURL =
     "https://www.ttownmedia.com/tracy_press/sports/prep_sports";
 
-  // Getting DOM strings to create cheerio objects out of.
-  const crimePromise = fetch(crimeNewsURL).then((res) => res.text());
-  const govPromise = fetch(govNewsURL).then((res) => res.text());
-  const edPromise = fetch(educationNewsURL).then((res) => res.text());
-  const localNewsPromise = fetch(localNewsURL).then((res) => res.text());
-  const localSportsPromise = fetch(localSportsURL).then((res) => res.text());
-  const highSchoolSportsPromise = fetch(highSchoolSportsURL).then((res) =>
-    res.text()
-  );
-  console.log("Creating HTTP req Promise Objects");
+  // Variables to reasign depending on if proxy is used.
+  let crimePromise;
+  let govPromise;
+  let edPromise;
+  let localNewsPromise;
+  let localSportsPromise;
+  let highSchoolSportsPromise;
 
-  // Getting DOM string objects for each sub category.
+  // Getting Category DOMS.
+  console.log("Fetching Category DOMS ");
+  crimePromise = fetchDelay(crimeNewsURL);
+  govPromise = fetchDelay(govNewsURL);
+  edPromise = fetchDelay(educationNewsURL);
+  localNewsPromise = fetchDelay(localNewsURL);
+  localSportsPromise = fetchDelay(localSportsURL);
+  highSchoolSportsPromise = fetchDelay(highSchoolSportsURL);
   const [
     crimeDOM,
     govDOM,
@@ -55,7 +62,7 @@ const getTracyURLS = async () => {
     highSchoolSportsPromise,
     localSportsPromise,
   ]);
-  console.log("Resolved HTTP get Req promise Objects.");
+  console.log("Got all Category DOMS");
 
   // Creating cheerio object out of DOM strings.
   const $crime = cheerio.load(crimeDOM);
@@ -92,7 +99,9 @@ const getTracyURLS = async () => {
     ...highSchoolSportsArticleURLS,
     ...localSportsArticleURLS,
   ];
-  return articleURLS;
+  let uniqueURLS = new Set(articleURLS);
+  let uniqueURLSArray = Array.from(uniqueURLS);
+  return uniqueURLSArray;
 };
 
 // @ desc Scrapes Oakdale Leader
@@ -100,16 +109,20 @@ const getTracyURLS = async () => {
 const tracyPressScraper = async () => {
   const articles = [];
 
-  // Getting an array of article DOM strings for cheerio.
-  const urls = await getTracyURLS();
-  const URLpromises = urls.map((url) => {
-    return fetch(url)
-      .then((res) => res.text())
-      .catch((e) => `${e.message} Could not get ${url}`);
+  // Getting article URLS.
+  let urls;
+  urls = await getTracyURLS();
+
+  console.log("Got all article URLS");
+
+  // Getting Article DOMS
+  let URLpromises;
+  console.log("Fetching article DOMS ");
+  URLpromises = urls.map((url) => {
+    return fetchWithProxyTracy(url);
   });
   const articleDOMS = await Promise.all(URLpromises);
-  console.log("Got Article URL DOMS, Scraping Data...");
-
+  console.log("Got all article DOMS, Scraping Data... ");
   // Iterating over urls, turning them to article objects, and pushing them to articles array.
   for (let i = 0; i < articleDOMS.length; i++) {
     // Creating article object and main cheerio object.
@@ -132,6 +145,18 @@ const tracyPressScraper = async () => {
       .find("time")
       .text()
       .trim();
+    let datetime;
+    try {
+      datetime = $("div.meta")
+        .find("span")
+        .find("ul")
+        .find("li.visible-print")
+        .find("time")
+        .attr("datetime");
+      datetime = moment(datetime).toDate();
+    } catch {
+      datetime = null;
+    }
 
     // Getting Image.
     const src = $("div.image").find("div").children().eq(2).attr("content");
@@ -139,7 +164,8 @@ const tracyPressScraper = async () => {
     const image = { src, alt };
 
     // Getting paragraphs.
-    const paragraphs = [];
+    let paragraphs = [];
+
     $("div.asset-content")
       .find("p")
       .each((i, element) => {
@@ -164,6 +190,7 @@ const tracyPressScraper = async () => {
     objectToPush["subcategory"] = subcategory;
     objectToPush["author"] = author;
     objectToPush["date"] = date;
+    objectToPush["datetime"] = datetime;
     objectToPush["img"] = image.src ? image : null;
     objectToPush["thumbnail"] = image.src ? image : null;
     objectToPush["paragraphs"] = paragraphs;

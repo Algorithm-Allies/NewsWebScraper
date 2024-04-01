@@ -72,6 +72,15 @@ async function scrapeData(city = "all") {
       break;
     case "all":
       try {
+        modestoArr = await modestoBeeScraper();
+        articles = [...articles, ...modestoArr];
+        console.log(
+          `Scraped ${modestoArr.length} articles from The Modesto Bee\n`
+        );
+      } catch (e) {
+        console.log(`Failed to scrape Modesto. Error: ${e.message}\n`);
+      }
+      try {
         tracyArr = await tracyPressScraper();
         articles = [...articles, ...tracyArr];
         console.log(
@@ -90,15 +99,6 @@ async function scrapeData(city = "all") {
         console.log(`Failed to scrape Turlock. Error ${e.message}\n`);
       }
       try {
-        modestoArr = await modestoBeeScraper();
-        articles = [...articles, ...modestoArr];
-        console.log(
-          `Scraped ${modestoArr.length} articles from The Modesto Bee\n`
-        );
-      } catch (e) {
-        console.log(`Failed to scrape Modesto. Error: ${e.message}\n`);
-      }
-      try {
         oakdaleArr = await oakdaleLeaderScraper();
         articles = [...articles, ...oakdaleArr];
         console.log(`Scraped ${oakdaleArr.length} from The Oakdale Leader\n`);
@@ -112,7 +112,7 @@ async function scrapeData(city = "all") {
           `Scraped ${riverbankArr.length} articles from The Riverbank News\n`
         );
       } catch (e) {
-        console.log(`Failed to scrape Oakdale. Error ${e.message}\n`);
+        console.log(`Failed to scrape Riverbank. Error ${e.message}\n`);
       }
       try {
         riponArr = await riponScraper();
@@ -121,11 +121,10 @@ async function scrapeData(city = "all") {
           `Scraped ${riponArr.length} articles from The Ripon Press\n`
         );
       } catch (e) {
-        console.log(`Failed to scrape Oakdale. Error ${e.message}\n`);
+        console.log(`Failed to scrape Ripon. Error ${e.message}\n`);
       }
 
       console.log(`Scraped a Total of ${articles.length} Articles. \n`);
-
       await writeFile(
         path.join(process.cwd(), "articles.json"),
         JSON.stringify(articles)
@@ -137,6 +136,6 @@ async function scrapeData(city = "all") {
 }
 
 // Updates Scraped Data object and will write to JSON file.
-scrapeData("ripon");
+scrapeData();
 
 module.exports = { scrapeData };

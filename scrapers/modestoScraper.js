@@ -1,4 +1,6 @@
 const cheerio = require("cheerio");
+const { fetchWithProxy } = require("../proxyFetch");
+const moment = require("moment");
 
 // Global variable for categorizing articles.
 subcategoriesObj = {};
@@ -19,22 +21,27 @@ const getModestoURLS = async () => {
   const highSchoolArticleURLS = new Set();
 
   // URLS to scrape for article URLS
-  const crimeURL = "https://www.modbee.com/news/local/crime";
-  const govURL = "https://www.modbee.com/news/politics-government/election";
-  const edURL = "https://www.modbee.com/news/local/education";
-  const localNewsURL = "https://www.modbee.com/news/local";
+  const crimeURL = "http://www.modbee.com/news/local/crime";
+  const govURL = "http://www.modbee.com/news/politics-government/election";
+  const edURL = "http://www.modbee.com/news/local/education";
+  const localNewsURL = "http://www.modbee.com/news/local";
   //const localSportsURL = ModestoBee has no localSports subcategory.
-  const highSchoolURL = "https://www.modbee.com/sports/high-school";
+  const highSchoolURL = "http://www.modbee.com/sports/high-school";
 
-  // Getting DOM strings for each page.
-  const crimePromise = fetch(crimeURL).then((res) => res.text());
-  const govPromise = fetch(govURL).then((res) => res.text());
-  const edPromise = fetch(edURL).then((res) => res.text());
-  const localNewsPromise = fetch(localNewsURL).then((res) => res.text());
-  const highSchoolPromise = fetch(highSchoolURL).then((res) => res.text());
-  console.log("Created HTTP GET req Promise Objects");
+  // Variables to reasign depending on if using proxy.
+  let crimePromise;
+  let govPromise;
+  let edPromise;
+  let localNewsPromise;
+  let highSchoolPromise;
+  // Getting Category DOMS.
+  console.log(`Fetching Category DOMS with Proxy `);
+  crimePromise = fetchWithProxy(crimeURL);
+  govPromise = fetchWithProxy(govURL);
+  edPromise = fetchWithProxy(edURL);
+  localNewsPromise = fetchWithProxy(localNewsURL);
+  highSchoolPromise = fetchWithProxy(highSchoolURL);
 
-  // Waiting for all promises to resolve.
   const [crimeDOM, govDOM, edDOM, localNewsDOM, highSchoolDOM] =
     await Promise.all([
       crimePromise,
@@ -43,7 +50,7 @@ const getModestoURLS = async () => {
       localNewsPromise,
       highSchoolPromise,
     ]);
-  console.log("Resolved all HTTP GET req Promise Objects");
+  console.log("Got all Category DOMS");
 
   // Creating cheerio objects out of DOM strings.
   const $crime = cheerio.load(crimeDOM);
@@ -84,13 +91,22 @@ const modestoBeeScraper = async () => {
   // Creating an array to push articles into and return.
   const articles = [];
 
-  // Getting article URLS and turning them into DOM strings.
-  const [urls, thumbnails] = await getModestoURLS();
-  const urlPromises = urls.map((url) => {
-    return fetch(url).then((res) => res.text());
+  let urls;
+  let thumbnails;
+  // Getting article URLS
+  const [resURLS, resThumbnails] = await getModestoURLS(true);
+  urls = resURLS;
+  thumbnails = resThumbnails;
+  console.log("Got all article URLS");
+
+  // Getting article DOMS
+  let urlPromises;
+  console.log(`Fetching article DOMS with proxy `);
+  urlPromises = urls.map((url) => {
+    return fetchWithProxy(url);
   });
   const articleDOMS = await Promise.all(urlPromises);
-  console.log("Got all Article URL DOMS, Scraping Data...");
+  console.log("Got all Article DOMS, Scraping data... ");
 
   // Iterating over each article DOM, creating article object, and pushing it to articles array.
   for (let i = 0; i < articleDOMS.length; i++) {
@@ -107,6 +123,12 @@ const modestoBeeScraper = async () => {
     // Getting date.
     const date =
       $("time.update-date").text() || $("time.publish-date").text() || null;
+    let datetime;
+    try {
+      datetime = moment($("time").attr("datetime")).toDate();
+    } catch {
+      datetime = null;
+    }
     const thumbnail = thumbnails[i];
 
     // Getting Image.
@@ -140,6 +162,7 @@ const modestoBeeScraper = async () => {
     articleObject["subcategory"] = subcategory;
     articleObject["author"] = author;
     articleObject["date"] = date;
+    articleObject["datetime"] = datetime;
     articleObject["image"] = image;
     articleObject["thumbnail"] = thumbnail;
     articleObject["paragraphs"] = paragraphs;

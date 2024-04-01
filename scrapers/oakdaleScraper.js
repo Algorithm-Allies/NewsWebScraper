@@ -1,4 +1,5 @@
 const cheerio = require("cheerio");
+const moment = require("moment");
 
 // Global Variable //
 const subcategoriesObj = {};
@@ -25,16 +26,19 @@ const getOakdaleURLS = async () => {
   const localNewsURL = "https://www.oakdaleleader.com/news/local-news";
   const localSportsURL = "https://www.oakdaleleader.com/sports/local-sports-2";
 
-  // Getting DOM strings to create cheerio objects out of.
-  const crimePromise = fetch(crimeURL).then((res) => res.text());
-  const govPromise = fetch(govURL).then((res) => res.text());
-  const edPromise = fetch(edURL).then((res) => res.text());
-  const localNewsPromise = fetch(localNewsURL).then((res) => res.text());
-  const localSportsPromise = fetch(localSportsURL).then((res) => res.text());
-  // NOTE: Oakdale Leader doesn't have High School Sports category.
-  console.log("Created HTTP GET req promise Objects.");
-
-  // Waiting untill all promise objects resolve.
+  // Variables to reasign depending on if using Proxy.
+  let crimePromise;
+  let govPromise;
+  let edPromise;
+  let localNewsPromise;
+  let localSportsPromise;
+  // Getting Category DOMS
+  console.log("Fetching Category DOMS ");
+  crimePromise = fetch(crimeURL).then((res) => res.text());
+  govPromise = fetch(govURL).then((res) => res.text());
+  edPromise = fetch(edURL).then((res) => res.text());
+  localNewsPromise = fetch(localNewsURL).then((res) => res.text());
+  localSportsPromise = fetch(localSportsURL).then((res) => res.text());
   const [crimeDOM, govDOM, edDOM, localNewsDOM, localSportsDOM] =
     await Promise.all([
       crimePromise,
@@ -43,7 +47,7 @@ const getOakdaleURLS = async () => {
       localNewsPromise,
       localSportsPromise,
     ]);
-  console.log("Resolved all HTTP GET req promise Objects");
+  console.log("Got all Category DOMS");
 
   // Creating cheerio objects out of DOM strings.
   const $crime = cheerio.load(crimeDOM);
@@ -83,13 +87,24 @@ const getOakdaleURLS = async () => {
 const oakdaleLeaderScraper = async () => {
   const articles = [];
 
-  // Getting an array of article DOM strings for cheerio.
-  const [urls, thumbnails] = await getOakdaleURLS();
-  const URLpromises = urls.map((url) => {
+  // Getting article URLS.
+  let urls;
+  let thumbnails;
+  const [resURLS, resThumbnails] = await getOakdaleURLS(true);
+  urls = resURLS;
+  thumbnails = resThumbnails;
+  console.log("Got all article URLS");
+
+  // Getting article DOMS
+  let URLpromises;
+  console.log("Getting article DOMS ");
+  URLpromises = urls.map((url) => {
     return fetch(url).then((res) => res.text());
   });
+
   const articleDOMS = await Promise.all(URLpromises);
-  console.log("Got article URL DOMS, Scraping Data...");
+  console.log("Got all article DOMS, Scraping data... ");
+
   // Iterating over each DOM in article DOM, and creating article object to push to articles array.
   for (let i = 0; i < articleDOMS.length; i++) {
     const objectToPush = {};
@@ -129,6 +144,7 @@ const oakdaleLeaderScraper = async () => {
     const subHeading = $("div.anvil-article__subtitle").text().trim() || null;
     const author = jsonData.page_meta.author || paragraphs[0];
     const date = jsonData.page_meta.page_created_at_pretty;
+    const datetime = moment(jsonData.page_created_at).toDate();
     const image = { src: $image.attr("src"), alt: $image.attr("alt") };
 
     // Saving data to an object I will push to the array of objects.
@@ -140,6 +156,7 @@ const oakdaleLeaderScraper = async () => {
     objectToPush["subcategory"] = subcategory;
     objectToPush["author"] = author;
     objectToPush["date"] = date;
+    objectToPush["datetime"] = datetime;
     objectToPush["img"] = image;
     objectToPush["thumbnail"] = thumbnails[i];
     objectToPush["paragraphs"] = paragraphs;

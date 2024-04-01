@@ -1,4 +1,5 @@
 const cheerio = require("cheerio");
+const moment = require("moment");
 
 // GLOBAL VARIABLE///
 const subcategoriesObj = {};
@@ -28,15 +29,22 @@ const getTurlockURLS = async () => {
   const highSchoolURLS =
     "https://www.turlockjournal.com/news/high-school-sports";
 
-  // Getting DOM strings to create cheerio objects out of.
-  const crimePromise = fetch(crimeURLS).then((res) => res.text());
-  const govPromise = fetch(govURLS).then((res) => res.text());
-  const edPromise = fetch(edURLS).then((res) => res.text());
-  const localNewsPromise = fetch(localNewsURLS).then((res) => res.text());
-  const localSportsPromise = fetch(localSportsURLS).then((res) => res.text());
-  const highSchoolPromise = fetch(highSchoolURLS).then((res) => res.text());
-  console.log("Created HTTP GET req promise Objects.");
+  // Variables to reasign depending on if Proxy is used.
+  let crimePromise;
+  let govPromise;
+  let edPromise;
+  let localNewsPromise;
+  let localSportsPromise;
+  let highSchoolPromise;
 
+  // Getting Category DOMS
+  console.log("Fetching Category DOMS ");
+  crimePromise = fetch(crimeURLS).then((res) => res.text());
+  govPromise = fetch(govURLS).then((res) => res.text());
+  edPromise = fetch(edURLS).then((res) => res.text());
+  localNewsPromise = fetch(localNewsURLS).then((res) => res.text());
+  localSportsPromise = fetch(localSportsURLS).then((res) => res.text());
+  highSchoolPromise = fetch(highSchoolURLS).then((res) => res.text());
   const [crimeDOM, govDOM, edDOM, localNewsDOM, localSportsDOM, highSchoolDOM] =
     await Promise.all([
       crimePromise,
@@ -46,7 +54,7 @@ const getTurlockURLS = async () => {
       localSportsPromise,
       highSchoolPromise,
     ]);
-  console.log("Resolved HTTP GET req promise objects.");
+  console.log("Got all Category DOMS");
 
   // Creating cheerio objects out of DOM strings.
   const $crime = cheerio.load(crimeDOM);
@@ -91,13 +99,22 @@ const getTurlockURLS = async () => {
 const turlockJournalScraper = async () => {
   const articles = [];
 
-  // Getting an array of article DOM strings for cheerio.
-  const [urls, thumbnails] = await getTurlockURLS();
-  const URLpromises = urls.map((url) => {
+  // Getting article URLS.
+  let urls;
+  let thumbnails;
+  const [resURLS, resThumbnails] = await getTurlockURLS();
+  urls = resURLS;
+  thumbnails = resThumbnails;
+  console.log("Got all article URLS");
+
+  // Getting article DOMS
+  let URLpromises;
+  console.log("Getting article DOMS ");
+  URLpromises = urls.map((url) => {
     return fetch(url).then((res) => res.text());
   });
   const articleDOMS = await Promise.all(URLpromises);
-  console.log("Got Article URL DOMS, Scraping Data...");
+  console.log("Got all article DOMS, Scraping Data... ");
 
   // Iterating over each DOM in article DOM, and creating article object to push to articles array.
   for (let i = 0; i < articleDOMS.length; i++) {
@@ -137,6 +154,7 @@ const turlockJournalScraper = async () => {
     const subHeading = $("div.anvil-article__subtitle").text().trim() || null;
     const author = jsonData.page_meta.author || paragraphs[0];
     const date = jsonData.page_meta.page_created_at_pretty;
+    const datetime = moment(jsonData.page_created_at).toDate();
     const image = { src: $image.attr("src"), alt: $image.attr("alt") };
     const [category, subcategory] = getCategories(source);
 
@@ -149,6 +167,7 @@ const turlockJournalScraper = async () => {
     objectToPush["subcategory"] = subcategory;
     objectToPush["author"] = author;
     objectToPush["date"] = date;
+    objectToPush["datetime"] = datetime;
     objectToPush["img"] = image;
     objectToPush["thumbnail"] = thumbnails[i];
     objectToPush["paragraphs"] = paragraphs;
