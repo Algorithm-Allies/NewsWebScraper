@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const { fetchWithProxy } = require("../proxyFetch");
+const { filterURLS } = require("../filterURLS");
 const moment = require("moment");
 
 // Global variable for categorizing articles.
@@ -82,7 +83,10 @@ const getModestoURLS = async () => {
     ...highSchoolArticleURLS,
   ];
 
-  return [articleURLS, thumbnailArr];
+  // Change dbURLS to actual dbURLS once API endpoint is set up.
+  const filteredArticleURLS = filterURLS(articleURLS);
+
+  return [filteredArticleURLS, thumbnailArr];
 };
 
 // @ desc Scrapes The Modesto Bee

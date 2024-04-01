@@ -2,6 +2,7 @@ const cheerio = require("cheerio");
 const moment = require("moment");
 const { fetchWithProxyTracy } = require("../proxyFetch");
 const { fetchDelay } = require("../delays");
+const { filterURLS } = require("../filterURLS");
 
 // GLOBAL VARS FOR CATEGORIZING ARTICLES //
 subcategoriesObj = {};
@@ -99,9 +100,14 @@ const getTracyURLS = async () => {
     ...highSchoolSportsArticleURLS,
     ...localSportsArticleURLS,
   ];
+
   let uniqueURLS = new Set(articleURLS);
   let uniqueURLSArray = Array.from(uniqueURLS);
-  return uniqueURLSArray;
+
+  // Change dbURLS to actual dbURLS once API endpoint is set up.
+  const filteredArticleURLS = filterURLS(uniqueURLSArray);
+
+  return filteredArticleURLS;
 };
 
 // @ desc Scrapes Oakdale Leader

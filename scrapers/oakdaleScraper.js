@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const moment = require("moment");
+const { filterURLS } = require("../filterURLS");
 
 // Global Variable //
 const subcategoriesObj = {};
@@ -79,7 +80,10 @@ const getOakdaleURLS = async () => {
     ...localSportsArticleURLS,
   ];
 
-  return [articleURLS, thumbnailArr];
+  // Change dbURLS to actual dbURLS once API endpoint is set up.
+  const filteredArticleURLS = filterURLS(articleURLS);
+
+  return [filteredArticleURLS, thumbnailArr];
 };
 
 // @ desc Scrapes Oakdale Leader

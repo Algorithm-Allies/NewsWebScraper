@@ -1,6 +1,7 @@
 // Imports
 const cheerio = require("cheerio");
 const moment = require("moment");
+const { filterURLS } = require("../filterURLS");
 
 // @ desc Scrapes Ripon Leader for article URLS.
 // @ returns array of article URLS to scrape.
@@ -58,7 +59,11 @@ const getRiponURLS = async () => {
     ...localNewsArticleURLS,
     ...highSchoolArticleURLS,
   ];
-  return [articleURLS, thumbnailArr];
+
+  // Change dbURLS to actual dbURLS once API endpoint is set up.
+  const filteredArticleURLS = filterURLS(articleURLS);
+
+  return [filteredArticleURLS, thumbnailArr];
 };
 // @ desc Scrapes Ripon News
 // @ returns updated Scraped data object with new scraped data.

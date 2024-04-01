@@ -1,5 +1,6 @@
 const cheerio = require("cheerio");
 const moment = require("moment");
+const { filterURLS } = require("../filterURLS");
 
 // GLOBAL VARIABLE///
 const subcategoriesObj = {};
@@ -91,7 +92,11 @@ const getTurlockURLS = async () => {
     ...localSportsArticleURLS,
     ...highSchoolSportsArticleURLS,
   ];
-  return [articleURLS, thumbnailArr];
+
+  // Change dbURLS to actual dbURLS once API endpoint is set up.
+  const filteredArticleURLS = filterURLS(articleURLS);
+
+  return [filteredArticleURLS, thumbnailArr];
 };
 
 // @ desc Scrapes The Turlock Journal
