@@ -1,6 +1,6 @@
 async function filterURLS(urls) {
   let attempts = 3;
-  let dbURLS = [];
+  let dbURLS = false;
 
   // Attempting to fetch DB URLS a few times due to Render's cold start.
   while (attempts) {
