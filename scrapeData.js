@@ -20,7 +20,7 @@ async function scrapeData(city = "all") {
   console.time();
   console.log("Getting Database URLS");
   const dbURLS = await getDataBaseURLS();
-  console.log("Got database URLS.");
+  console.log("Got database URLS.\n");
   switch (city) {
     case "turlock":
       articles = await turlockJournalScraper(dbURLS);
