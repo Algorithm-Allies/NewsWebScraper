@@ -7,7 +7,7 @@ const subcategoriesObj = {};
 
 // @ desc Scrapes The Turlock Journal for article URLS.
 // @ returns array of article URLS to scrape.
-const getTurlockURLS = async () => {
+const getTurlockURLS = async (dbURLS) => {
   console.log("Scraping The Turlock Journal");
 
   // Arrays to return.
@@ -95,7 +95,7 @@ const getTurlockURLS = async () => {
 
   // Filtering out DB URLS.
   console.log("Filtering...");
-  const filteredArticleURLS = await filterURLS(articleURLS);
+  const filteredArticleURLS = await filterURLS(articleURLS, dbURLS);
   if (!filteredArticleURLS) {
     console.error("Failed to filter URLS. Shutting down Scraper.");
     return false;
@@ -106,13 +106,13 @@ const getTurlockURLS = async () => {
 
 // @ desc Scrapes The Turlock Journal
 // @ returns updated Scraped data object with new scraped data.
-const turlockJournalScraper = async () => {
+const turlockJournalScraper = async (dbURLS) => {
   const articles = [];
 
   // Getting article URLS.
   let urls;
   let thumbnails;
-  const [resURLS, resThumbnails] = await getTurlockURLS();
+  const [resURLS, resThumbnails] = await getTurlockURLS(dbURLS);
   urls = resURLS;
   if (!urls) {
     return;

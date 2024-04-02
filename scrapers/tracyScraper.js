@@ -8,7 +8,7 @@ const { filterURLS } = require("../filterURLS");
 subcategoriesObj = {};
 
 // @ Desc scrapes tracy press for article urls.
-const getTracyURLS = async () => {
+const getTracyURLS = async (dbURLS) => {
   console.log("Scraping The Tracy Press");
 
   // Creating sets to populate with unique URLS.
@@ -106,7 +106,7 @@ const getTracyURLS = async () => {
 
   // Filtering out DB URLS.
   console.log("Filtering...");
-  const filteredArticleURLS = await filterURLS(articleURLS);
+  const filteredArticleURLS = await filterURLS(uniqueURLSArray, dbURLS);
   if (!filteredArticleURLS) {
     console.error("Failed to filter URLS. Shutting down Scraper.");
     return;
@@ -117,12 +117,12 @@ const getTracyURLS = async () => {
 
 // @ desc Scrapes Oakdale Leader
 // @ returns updated Scraped data object with new scraped data.
-const tracyPressScraper = async () => {
+const tracyPressScraper = async (dbURLS) => {
   const articles = [];
 
   // Getting article URLS.
   let urls;
-  urls = await getTracyURLS();
+  urls = await getTracyURLS(dbURLS);
   if (!urls) {
     return;
   }

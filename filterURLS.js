@@ -1,29 +1,4 @@
-async function filterURLS(urls) {
-  let attempts = 3;
-  let dbURLS = false;
-
-  // Attempting to fetch DB URLS a few times due to Render's cold start.
-  while (attempts) {
-    dbURLS = await fetch("https://valleynews.onrender.com/api/articles/urls")
-      .then((res) => {
-        if (res.ok) {
-          attempts = 0;
-          return res.json();
-        }
-        attempts -= 1;
-      })
-      .catch((e) => {
-        attempts -= 1;
-        console.log(`Failed to fetch DB URLS, attempts left: ${attempts}`);
-      });
-  }
-
-  // Checking for Db URLS.
-  if (!dbURLS) {
-    console.log("Failed to fetch DB URLS.");
-    return false;
-  }
-
+async function filterURLS(urls, dbURLS) {
   // Creating hashmap of URLS for constant time lookup.
   const hashmap = {};
   for (let i = 0; i < dbURLS.length; i++) {

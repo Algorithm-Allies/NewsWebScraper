@@ -9,6 +9,7 @@ const { oakdaleLeaderScraper } = require("./scrapers/oakdaleScraper");
 const { riverbankNewsScraper } = require("./scrapers/riverbankScraper");
 const { tracyPressScraper } = require("./scrapers/tracyScraper");
 const { riponScraper } = require("./scrapers/riponScraper");
+const { getDataBaseURLS } = require("./getDataBaseURLS");
 
 //// FUNCTIONS ////
 // @ desc Scrapes city data or all cities if all is passed as arg.
@@ -17,9 +18,12 @@ async function scrapeData(city = "all") {
   console.log("\n");
   let articles = [];
   console.time();
+  console.log("Getting Database URLS");
+  const dbURLS = await getDataBaseURLS();
+  console.log("Got database URLS.");
   switch (city) {
     case "turlock":
-      articles = await turlockJournalScraper();
+      articles = await turlockJournalScraper(dbURLS);
       console.log(
         `Scraped ${articles.length} articles from The Turlock Journal`
       );
@@ -29,7 +33,7 @@ async function scrapeData(city = "all") {
       );
       break;
     case "modesto":
-      articles = await modestoBeeScraper();
+      articles = await modestoBeeScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from The Modesto Bee`);
       await writeFile(
         path.join(process.cwd(), "articles.json"),
@@ -37,7 +41,7 @@ async function scrapeData(city = "all") {
       );
       break;
     case "oakdale":
-      articles = await oakdaleLeaderScraper();
+      articles = await oakdaleLeaderScraper(dbURLS);
       console.log(
         `Scraped ${articles.length} articles from The Oakdale Leader`
       );
@@ -47,7 +51,7 @@ async function scrapeData(city = "all") {
       );
       break;
     case "riverbank":
-      articles = await riverbankNewsScraper();
+      articles = await riverbankNewsScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Riverbank News`);
       await writeFile(
         path.join(process.cwd(), "articles.json"),
@@ -55,7 +59,7 @@ async function scrapeData(city = "all") {
       );
       break;
     case "tracy":
-      articles = await tracyPressScraper();
+      articles = await tracyPressScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Tracy Press`);
       await writeFile(
         path.join(process.cwd(), "articles.json"),
@@ -63,7 +67,7 @@ async function scrapeData(city = "all") {
       );
       break;
     case "ripon":
-      articles = await riponScraper();
+      articles = await riponScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Ripon Press`);
       await writeFile(
         path.join(process.cwd(), "articles.json"),
@@ -72,7 +76,7 @@ async function scrapeData(city = "all") {
       break;
     case "all":
       try {
-        modestoArr = await modestoBeeScraper();
+        modestoArr = await modestoBeeScraper(dbURLS);
         articles = [...articles, ...modestoArr];
         console.log(
           `Scraped ${modestoArr.length} articles from The Modesto Bee\n`
@@ -81,7 +85,7 @@ async function scrapeData(city = "all") {
         console.log(`Failed to scrape Modesto. Error: ${e.message}\n`);
       }
       try {
-        tracyArr = await tracyPressScraper();
+        tracyArr = await tracyPressScraper(dbURLS);
         articles = [...articles, ...tracyArr];
         console.log(
           `Scraped ${tracyArr.length} articles from The Tracy Press\n`
@@ -90,7 +94,7 @@ async function scrapeData(city = "all") {
         console.log(`Failed to scrape Tracy. Error ${e.message}\n`);
       }
       try {
-        turlockArr = await turlockJournalScraper();
+        turlockArr = await turlockJournalScraper(dbURLS);
         articles = [...articles, ...turlockArr];
         console.log(
           `Scraped ${turlockArr.length} articles from The Turlock Journal\n`
@@ -99,14 +103,14 @@ async function scrapeData(city = "all") {
         console.log(`Failed to scrape Turlock. Error ${e.message}\n`);
       }
       try {
-        oakdaleArr = await oakdaleLeaderScraper();
+        oakdaleArr = await oakdaleLeaderScraper(dbURLS);
         articles = [...articles, ...oakdaleArr];
         console.log(`Scraped ${oakdaleArr.length} from The Oakdale Leader\n`);
       } catch (e) {
         console.log(`Failed to scrape Oakdale. Error ${e.message}\n`);
       }
       try {
-        riverbankArr = await riverbankNewsScraper();
+        riverbankArr = await riverbankNewsScraper(dbURLS);
         articles = [...articles, ...riverbankArr];
         console.log(
           `Scraped ${riverbankArr.length} articles from The Riverbank News\n`
@@ -115,7 +119,7 @@ async function scrapeData(city = "all") {
         console.log(`Failed to scrape Riverbank. Error ${e.message}\n`);
       }
       try {
-        riponArr = await riponScraper();
+        riponArr = await riponScraper(dbURLS);
         articles = [...articles, ...riponArr];
         console.log(
           `Scraped ${riponArr.length} articles from The Ripon Press\n`
@@ -136,6 +140,6 @@ async function scrapeData(city = "all") {
 }
 
 // Updates Scraped Data object and will write to JSON file.
-scrapeData();
+scrapeData("turlock");
 
 module.exports = { scrapeData };

@@ -8,7 +8,7 @@ const subcategoriesObj = {};
 
 // @ desc Scrapes The Modesto Bee for Article URLS.
 // @ returns array of article URLS to scrape.
-const getModestoURLS = async () => {
+const getModestoURLS = async (dbURLS) => {
   console.log("Scraping The Modesto Bee");
 
   // Arrays to populate with URLS and thumbnails.
@@ -85,7 +85,7 @@ const getModestoURLS = async () => {
 
   // Filtering out DB URLS.
   console.log("Filtering...");
-  const filteredArticleURLS = await filterURLS(articleURLS);
+  const filteredArticleURLS = await filterURLS(articleURLS, dbURLS);
   if (!filteredArticleURLS) {
     console.error("Failed to filter URLS. Shutting down Scraper.");
     return;
@@ -96,14 +96,14 @@ const getModestoURLS = async () => {
 
 // @ desc Scrapes The Modesto Bee
 // @ returns updated Scraped data object with new scraped data.
-const modestoBeeScraper = async () => {
+const modestoBeeScraper = async (dbURLS) => {
   // Creating an array to push articles into and return.
   const articles = [];
 
   let urls;
   let thumbnails;
   // Getting article URLS
-  const [resURLS, resThumbnails] = await getModestoURLS(true);
+  const [resURLS, resThumbnails] = await getModestoURLS(dbURLS);
   urls = resURLS;
   if (!urls) {
     return;

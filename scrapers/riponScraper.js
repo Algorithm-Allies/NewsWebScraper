@@ -5,7 +5,7 @@ const { filterURLS } = require("../filterURLS");
 
 // @ desc Scrapes Ripon Leader for article URLS.
 // @ returns array of article URLS to scrape.
-const getRiponURLS = async () => {
+const getRiponURLS = async (dbURLS) => {
   console.log("Scraping The Ripon Press");
 
   // An array to populate with thumbnail objects.
@@ -62,7 +62,7 @@ const getRiponURLS = async () => {
 
   // Filtering out DB URLS.
   console.log("Filtering...");
-  const filteredArticleURLS = await filterURLS(articleURLS);
+  const filteredArticleURLS = await filterURLS(articleURLS, dbURLS);
   if (!filteredArticleURLS) {
     console.error("Failed to filter URLS. Shutting down Scraper.");
     return;
@@ -72,13 +72,13 @@ const getRiponURLS = async () => {
 };
 // @ desc Scrapes Ripon News
 // @ returns updated Scraped data object with new scraped data.
-const riponScraper = async () => {
+const riponScraper = async (dbURLS) => {
   const articles = [];
 
   // Getting article URLS
   let urls;
   let thumbnails;
-  const [resURLS, resThumbnails] = await getRiponURLS();
+  const [resURLS, resThumbnails] = await getRiponURLS(dbURLS);
   urls = resURLS;
   if (!urls) {
     return;
