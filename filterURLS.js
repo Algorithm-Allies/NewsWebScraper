@@ -6,8 +6,11 @@ async function filterURLS(urls) {
   while (attempts) {
     dbURLS = await fetch("https://valleynews.onrender.com/api/articles/urls")
       .then((res) => {
-        attempts = 0;
-        return res.json();
+        if (res.ok) {
+          attempts = 0;
+          return res.json();
+        }
+        attempts -= 1;
       })
       .catch((e) => {
         attempts -= 1;
