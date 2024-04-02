@@ -105,6 +105,9 @@ const modestoBeeScraper = async () => {
   // Getting article URLS
   const [resURLS, resThumbnails] = await getModestoURLS(true);
   urls = resURLS;
+  if (!urls) {
+    return;
+  }
   thumbnails = resThumbnails;
   console.log("Got all article URLS");
 

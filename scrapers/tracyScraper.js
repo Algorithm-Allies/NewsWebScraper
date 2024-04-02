@@ -123,6 +123,9 @@ const tracyPressScraper = async () => {
   // Getting article URLS.
   let urls;
   urls = await getTracyURLS();
+  if (!urls) {
+    return;
+  }
 
   console.log("Got all article URLS");
 

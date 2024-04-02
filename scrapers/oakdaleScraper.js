@@ -101,6 +101,9 @@ const oakdaleLeaderScraper = async () => {
   let thumbnails;
   const [resURLS, resThumbnails] = await getOakdaleURLS(true);
   urls = resURLS;
+  if (!urls) {
+    return;
+  }
   thumbnails = resThumbnails;
   console.log("Got all article URLS");
 

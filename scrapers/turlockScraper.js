@@ -98,7 +98,7 @@ const getTurlockURLS = async () => {
   const filteredArticleURLS = await filterURLS(articleURLS);
   if (!filteredArticleURLS) {
     console.error("Failed to filter URLS. Shutting down Scraper.");
-    return;
+    return false;
   }
 
   return [filteredArticleURLS, thumbnailArr];
@@ -114,6 +114,9 @@ const turlockJournalScraper = async () => {
   let thumbnails;
   const [resURLS, resThumbnails] = await getTurlockURLS();
   urls = resURLS;
+  if (!urls) {
+    return;
+  }
   thumbnails = resThumbnails;
   console.log("Got all article URLS");
 

@@ -111,6 +111,9 @@ const riverbankNewsScraper = async () => {
   let thumbnails;
   const [resURLS, resThumbnails] = await getRiverbankURLS();
   urls = resURLS;
+  if (!urls) {
+    return;
+  }
   thumbnails = resThumbnails;
   console.log("Got all article URLS");
 

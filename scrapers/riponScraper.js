@@ -80,6 +80,9 @@ const riponScraper = async () => {
   let thumbnails;
   const [resURLS, resThumbnails] = await getRiponURLS();
   urls = resURLS;
+  if (!urls) {
+    return;
+  }
   thumbnails = resThumbnails;
   console.log("Got all article URLS");
 
