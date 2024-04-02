@@ -93,8 +93,13 @@ const getTurlockURLS = async () => {
     ...highSchoolSportsArticleURLS,
   ];
 
-  // Change dbURLS to actual dbURLS once API endpoint is set up.
-  const filteredArticleURLS = filterURLS(articleURLS);
+  // Filtering out DB URLS.
+  console.log("Filtering...");
+  const filteredArticleURLS = await filterURLS(articleURLS);
+  if (!filteredArticleURLS) {
+    console.error("Failed to filter URLS. Shutting down Scraper.");
+    return;
+  }
 
   return [filteredArticleURLS, thumbnailArr];
 };

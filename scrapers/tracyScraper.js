@@ -104,8 +104,13 @@ const getTracyURLS = async () => {
   let uniqueURLS = new Set(articleURLS);
   let uniqueURLSArray = Array.from(uniqueURLS);
 
-  // Change dbURLS to actual dbURLS once API endpoint is set up.
-  const filteredArticleURLS = filterURLS(uniqueURLSArray);
+  // Filtering out DB URLS.
+  console.log("Filtering...");
+  const filteredArticleURLS = await filterURLS(articleURLS);
+  if (!filteredArticleURLS) {
+    console.error("Failed to filter URLS. Shutting down Scraper.");
+    return;
+  }
 
   return filteredArticleURLS;
 };
