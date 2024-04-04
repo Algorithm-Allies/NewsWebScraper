@@ -31,6 +31,15 @@ async function scrapeData(city = "all") {
         path.join(process.cwd(), "articles.json"),
         JSON.stringify(articles)
       );
+      console.log(articles);
+      await fetch("https://valleynews.onrender.com/api/articles", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Content_Type: "application/json",
+        },
+        body: { articles },
+      }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
       break;
     case "modesto":
       articles = await modestoBeeScraper(dbURLS);
@@ -133,13 +142,23 @@ async function scrapeData(city = "all") {
         path.join(process.cwd(), "articles.json"),
         JSON.stringify(articles)
       );
+
+      await fetch("https://valleynews.onrender.com/api/articles", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Content_Type: "application/json",
+        },
+        body: { articles: articles },
+      }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
       break;
   }
+
   console.log("Wrote Articles to articles.json");
   console.timeEnd();
 }
 
 // Updates Scraped Data object and will write to JSON file.
-scrapeData();
+scrapeData("turlock");
 
 module.exports = { scrapeData };
