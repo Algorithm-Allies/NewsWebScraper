@@ -1,12 +1,13 @@
 const cheerio = require("cheerio");
 const moment = require("moment");
+const { filterURLS } = require("../filterURLS");
 
 // Global Variable //
 const subcategoriesObj = {};
 
 // @ desc Scrapes Oakdale Leader for article URLS.
 // @ returns URLS and Thumbnail objects.
-const getOakdaleURLS = async () => {
+const getOakdaleURLS = async (dbURLS) => {
   console.log("Scraping the Oakdale Leader");
 
   // Arrays to return.
@@ -79,19 +80,30 @@ const getOakdaleURLS = async () => {
     ...localSportsArticleURLS,
   ];
 
-  return [articleURLS, thumbnailArr];
+  // Filtering out DB URLS.
+  console.log("Filtering...");
+  const filteredArticleURLS = await filterURLS(articleURLS, dbURLS);
+  if (!filteredArticleURLS) {
+    console.error("Failed to filter URLS. Shutting down Scraper.");
+    return;
+  }
+
+  return [filteredArticleURLS, thumbnailArr];
 };
 
 // @ desc Scrapes Oakdale Leader
 // @ returns updated Scraped data object with new scraped data.
-const oakdaleLeaderScraper = async () => {
+const oakdaleLeaderScraper = async (dbURLS) => {
   const articles = [];
 
   // Getting article URLS.
   let urls;
   let thumbnails;
-  const [resURLS, resThumbnails] = await getOakdaleURLS(true);
+  const [resURLS, resThumbnails] = await getOakdaleURLS(dbURLS);
   urls = resURLS;
+  if (!urls) {
+    return;
+  }
   thumbnails = resThumbnails;
   console.log("Got all article URLS");
 

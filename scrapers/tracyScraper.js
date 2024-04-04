@@ -2,12 +2,13 @@ const cheerio = require("cheerio");
 const moment = require("moment");
 const { fetchWithProxyTracy } = require("../proxyFetch");
 const { fetchDelay } = require("../delays");
+const { filterURLS } = require("../filterURLS");
 
 // GLOBAL VARS FOR CATEGORIZING ARTICLES //
 subcategoriesObj = {};
 
 // @ Desc scrapes tracy press for article urls.
-const getTracyURLS = async () => {
+const getTracyURLS = async (dbURLS) => {
   console.log("Scraping The Tracy Press");
 
   // Creating sets to populate with unique URLS.
@@ -99,19 +100,32 @@ const getTracyURLS = async () => {
     ...highSchoolSportsArticleURLS,
     ...localSportsArticleURLS,
   ];
+
   let uniqueURLS = new Set(articleURLS);
   let uniqueURLSArray = Array.from(uniqueURLS);
-  return uniqueURLSArray;
+
+  // Filtering out DB URLS.
+  console.log("Filtering...");
+  const filteredArticleURLS = await filterURLS(uniqueURLSArray, dbURLS);
+  if (!filteredArticleURLS) {
+    console.error("Failed to filter URLS. Shutting down Scraper.");
+    return;
+  }
+
+  return filteredArticleURLS;
 };
 
 // @ desc Scrapes Oakdale Leader
 // @ returns updated Scraped data object with new scraped data.
-const tracyPressScraper = async () => {
+const tracyPressScraper = async (dbURLS) => {
   const articles = [];
 
   // Getting article URLS.
   let urls;
-  urls = await getTracyURLS();
+  urls = await getTracyURLS(dbURLS);
+  if (!urls) {
+    return;
+  }
 
   console.log("Got all article URLS");
 

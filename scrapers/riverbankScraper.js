@@ -1,12 +1,13 @@
 const cheerio = require("cheerio");
 const moment = require("moment");
+const { filterURLS } = require("../filterURLS");
 
 // GLOBAL VARIABLE //
 const subcategoriesObj = {};
 
 // @ desc Scrapes The Riverbank News for Article URLS.
 // @ returns array of article URLS to scrape.
-const getRiverbankURLS = async () => {
+const getRiverbankURLS = async (dbURLS) => {
   console.log("Scraping The Riverbank News");
   // Arrays to return.
   const thumbnailArr = [];
@@ -89,19 +90,30 @@ const getRiverbankURLS = async () => {
     ...highSchoolArticleURLS,
   ];
 
-  return [articleURLS, thumbnailArr];
+  // Filtering out DB URLS.
+  console.log("Filtering...");
+  const filteredArticleURLS = await filterURLS(articleURLS, dbURLS);
+  if (!filteredArticleURLS) {
+    console.error("Failed to filter URLS. Shutting down Scraper.");
+    return;
+  }
+
+  return [filteredArticleURLS, thumbnailArr];
 };
 
 // @ desc Scrapes The Turlock Journal
 // @ returns updated Scraped data object with new scraped data.
-const riverbankNewsScraper = async () => {
+const riverbankNewsScraper = async (dbURLS) => {
   const articles = [];
 
   // Getting article URLS
   let urls;
   let thumbnails;
-  const [resURLS, resThumbnails] = await getRiverbankURLS();
+  const [resURLS, resThumbnails] = await getRiverbankURLS(dbURLS);
   urls = resURLS;
+  if (!urls) {
+    return;
+  }
   thumbnails = resThumbnails;
   console.log("Got all article URLS");
 
