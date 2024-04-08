@@ -37,6 +37,7 @@ async function scrapeData(city = "all") {
         },
         body: JSON.stringify(articles),
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+      console.log(`Sent ${articles.length} articles to Database. \n`);
 
       break;
 
@@ -52,6 +53,7 @@ async function scrapeData(city = "all") {
         },
         body: JSON.stringify(articles),
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+      console.log(`Sent ${articles.length} articles to Database. \n`);
 
       break;
 
@@ -69,6 +71,7 @@ async function scrapeData(city = "all") {
         },
         body: JSON.stringify(articles),
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+      console.log(`Sent ${articles.length} articles to Database. \n`);
 
       break;
 
@@ -84,6 +87,7 @@ async function scrapeData(city = "all") {
         },
         body: JSON.stringify(articles),
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+      console.log(`Sent ${articles.length} articles to Database. \n`);
 
       break;
 
@@ -99,6 +103,7 @@ async function scrapeData(city = "all") {
         },
         body: JSON.stringify(articles),
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+      console.log(`Sent ${articles.length} articles to Database. \n`);
 
       break;
 
@@ -114,6 +119,7 @@ async function scrapeData(city = "all") {
         },
         body: JSON.stringify(articles),
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+      console.log(`Sent ${articles.length} articles to Database. \n`);
 
       break;
 
@@ -181,6 +187,7 @@ async function scrapeData(city = "all") {
         },
         body: { articles: articles },
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+      console.log(`Sent ${articles.length} articles to Database. \n`);
       break;
   }
 
