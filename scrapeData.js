@@ -1,7 +1,5 @@
 //Authors: Manuel, Mobin
 //// IMPORTS ////
-const { writeFile } = require("fs/promises");
-const path = require("path");
 // Getting Scraper functions.
 const { modestoBeeScraper } = require("./scrapers/modestoScraper");
 const { turlockJournalScraper } = require("./scrapers/turlockScraper");
@@ -16,21 +14,21 @@ const { getDataBaseURLS } = require("./getDataBaseURLS");
 // @ returns an array of objects where each object represents an article with the data we need as properties.
 async function scrapeData(city = "all") {
   console.log("\n");
+
   let articles = [];
   console.time();
   console.log("Getting Database URLS");
+
   const dbURLS = await getDataBaseURLS();
   console.log("Got database URLS.\n");
+
   switch (city) {
     case "turlock":
       articles = await turlockJournalScraper(dbURLS);
       console.log(
         `Scraped ${articles.length} articles from The Turlock Journal`
       );
-      await writeFile(
-        path.join(process.cwd(), "articles.json"),
-        JSON.stringify(articles)
-      );
+
       await fetch("https://valleynews.onrender.com/api/articles", {
         method: "POST",
         headers: {
@@ -39,49 +37,86 @@ async function scrapeData(city = "all") {
         },
         body: JSON.stringify(articles),
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+
       break;
+
     case "modesto":
       articles = await modestoBeeScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from The Modesto Bee`);
-      await writeFile(
-        path.join(process.cwd(), "articles.json"),
-        JSON.stringify(articles)
-      );
+
+      await fetch("https://valleynews.onrender.com/api/articles", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(articles),
+      }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+
       break;
+
     case "oakdale":
       articles = await oakdaleLeaderScraper(dbURLS);
       console.log(
         `Scraped ${articles.length} articles from The Oakdale Leader`
       );
-      await writeFile(
-        path.join(process.cwd(), "articles.json"),
-        JSON.stringify(articles)
-      );
+
+      await fetch("https://valleynews.onrender.com/api/articles", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(articles),
+      }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+
       break;
+
     case "riverbank":
       articles = await riverbankNewsScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Riverbank News`);
-      await writeFile(
-        path.join(process.cwd(), "articles.json"),
-        JSON.stringify(articles)
-      );
+
+      await fetch("https://valleynews.onrender.com/api/articles", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(articles),
+      }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+
       break;
+
     case "tracy":
       articles = await tracyPressScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Tracy Press`);
-      await writeFile(
-        path.join(process.cwd(), "articles.json"),
-        JSON.stringify(articles)
-      );
+
+      await fetch("https://valleynews.onrender.com/api/articles", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(articles),
+      }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+
       break;
+
     case "ripon":
       articles = await riponScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Ripon Press`);
-      await writeFile(
-        path.join(process.cwd(), "articles.json"),
-        JSON.stringify(articles)
-      );
+
+      await fetch("https://valleynews.onrender.com/api/articles", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(articles),
+      }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
+
       break;
+
     case "all":
       try {
         modestoArr = await modestoBeeScraper(dbURLS);
@@ -137,10 +172,6 @@ async function scrapeData(city = "all") {
       }
 
       console.log(`Scraped a Total of ${articles.length} Articles. \n`);
-      await writeFile(
-        path.join(process.cwd(), "articles.json"),
-        JSON.stringify(articles)
-      );
 
       await fetch("https://valleynews.onrender.com/api/articles", {
         method: "POST",
@@ -159,5 +190,3 @@ async function scrapeData(city = "all") {
 
 // Updates Scraped Data object and will write to JSON file.
 scrapeData("turlock");
-
-module.exports = { scrapeData };
