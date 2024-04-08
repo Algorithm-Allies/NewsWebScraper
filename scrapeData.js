@@ -37,7 +37,7 @@ async function scrapeData(city = "all") {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify([articles[0], articles[1]]),
+        body: JSON.stringify(articles),
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
       break;
     case "modesto":
