@@ -187,15 +187,14 @@ async function scrapeData(city = "all") {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: { articles: articles },
+        body: JSON.stringify(articles),
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
       console.log(`Sent ${articles.length} articles to Database. \n`);
       break;
   }
 
-  console.log("Wrote Articles to articles.json");
   console.timeEnd();
 }
 
 // Updates Scraped Data object and will write to JSON file.
-scrapeData();
+scrapeData("modesto");
