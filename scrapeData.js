@@ -29,7 +29,7 @@ async function scrapeData(city = "all") {
         `Scraped ${articles.length} articles from The Turlock Journal`
       );
 
-      await fetch("https://valleynews.onrender.com/api/articles", {
+      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -45,7 +45,7 @@ async function scrapeData(city = "all") {
       articles = await modestoBeeScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from The Modesto Bee`);
 
-      await fetch("https://valleynews.onrender.com/api/articles", {
+      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -63,7 +63,7 @@ async function scrapeData(city = "all") {
         `Scraped ${articles.length} articles from The Oakdale Leader`
       );
 
-      await fetch("https://valleynews.onrender.com/api/articles", {
+      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -79,7 +79,7 @@ async function scrapeData(city = "all") {
       articles = await riverbankNewsScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Riverbank News`);
 
-      await fetch("https://valleynews.onrender.com/api/articles", {
+      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -95,7 +95,7 @@ async function scrapeData(city = "all") {
       articles = await tracyPressScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Tracy Press`);
 
-      await fetch("https://valleynews.onrender.com/api/articles", {
+      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -111,7 +111,7 @@ async function scrapeData(city = "all") {
       articles = await riponScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Ripon Press`);
 
-      await fetch("https://valleynews.onrender.com/api/articles", {
+      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -179,7 +179,7 @@ async function scrapeData(city = "all") {
 
       console.log(`Scraped a Total of ${articles.length} Articles. \n`);
 
-      await fetch("https://valleynews.onrender.com/api/articles", {
+      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
         method: "POST",
         headers: {
           Accept: "application/json",
