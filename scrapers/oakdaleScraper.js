@@ -172,6 +172,7 @@ const oakdaleLeaderScraper = async (dbURLS) => {
     objectToPush["img"] = image;
     objectToPush["thumbnail"] = thumbnails[i];
     objectToPush["paragraphs"] = paragraphs;
+    objectToPush["business_id"] = null;
 
     articles.push(objectToPush);
   }

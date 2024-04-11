@@ -147,6 +147,7 @@ const riponScraper = async (dbURLS) => {
       : null;
     objectToPush["image"] = image.src ? image : null;
     objectToPush["paragraphs"] = paragraphs;
+    objectToPush["business_id"] = null;
 
     if (objectToPush.paragraphs.length != 0) {
       articles.push(objectToPush);

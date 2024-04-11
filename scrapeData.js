@@ -1,6 +1,8 @@
 //Authors: Manuel, Mobin
 //// IMPORTS ////
 // Getting Scraper functions.
+require("dotenv").config();
+
 const { modestoBeeScraper } = require("./scrapers/modestoScraper");
 const { turlockJournalScraper } = require("./scrapers/turlockScraper");
 const { oakdaleLeaderScraper } = require("./scrapers/oakdaleScraper");
@@ -9,7 +11,9 @@ const { tracyPressScraper } = require("./scrapers/tracyScraper");
 const { riponScraper } = require("./scrapers/riponScraper");
 const { getDataBaseURLS } = require("./getDataBaseURLS");
 
-const dbURL = "https://valleynews-dev.onrender.com/api/articles/";
+const dbURL = process.env.API_URL;
+
+
 
 //// FUNCTIONS ////
 // @ desc Scrapes city data or all cities if all is passed as arg.

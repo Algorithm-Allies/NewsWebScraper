@@ -208,6 +208,7 @@ const tracyPressScraper = async (dbURLS) => {
     objectToPush["img"] = image.src ? image : null;
     objectToPush["thumbnail"] = image.src ? image : null;
     objectToPush["paragraphs"] = paragraphs;
+    objectToPush["business_id"] = null;
 
     // Pushing object to articles array.
     if (objectToPush.paragraphs.length != 0) {

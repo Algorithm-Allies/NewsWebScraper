@@ -175,9 +175,10 @@ const modestoBeeScraper = async (dbURLS) => {
     articleObject["author"] = author;
     articleObject["date"] = date;
     articleObject["datetime"] = datetime;
-    articleObject["image"] = image;
+    articleObject["img"] = image;
     articleObject["thumbnail"] = thumbnail;
     articleObject["paragraphs"] = paragraphs;
+    articleObject["business_id"] = null;
 
     // Edge case: Some modesto articles had no title and were still being worked on.
     if (articleObject.heading) {
