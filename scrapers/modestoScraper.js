@@ -194,7 +194,9 @@ function getURLS($, thumbnailArr, toAdd) {
   $("a.image-link-macro").each((i, element) => {
     const anchor = $(element);
     toAdd.add(anchor.attr("href"));
-    thumbnailArr.push(anchor.find("img").attr("src"));
+    const thumbnailSrc = anchor.find("img").attr("src");
+    const thumbnailAlt = anchor.find("img").attr("alt") || null;
+    thumbnailArr.push({ src: thumbnailSrc, alt: thumbnailAlt });
   });
 }
 

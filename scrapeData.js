@@ -9,6 +9,8 @@ const { tracyPressScraper } = require("./scrapers/tracyScraper");
 const { riponScraper } = require("./scrapers/riponScraper");
 const { getDataBaseURLS } = require("./getDataBaseURLS");
 
+const dbURL = "https://valleynews-dev.onrender.com/api/articles/";
+
 //// FUNCTIONS ////
 // @ desc Scrapes city data or all cities if all is passed as arg.
 // @ returns an array of objects where each object represents an article with the data we need as properties.
@@ -29,7 +31,7 @@ async function scrapeData(city = "all") {
         `Scraped ${articles.length} articles from The Turlock Journal`
       );
 
-      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
+      await fetch(dbURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -45,7 +47,7 @@ async function scrapeData(city = "all") {
       articles = await modestoBeeScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from The Modesto Bee`);
 
-      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
+      await fetch(dbURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -63,7 +65,7 @@ async function scrapeData(city = "all") {
         `Scraped ${articles.length} articles from The Oakdale Leader`
       );
 
-      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
+      await fetch(dbURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -79,7 +81,7 @@ async function scrapeData(city = "all") {
       articles = await riverbankNewsScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Riverbank News`);
 
-      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
+      await fetch(dbURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -95,7 +97,7 @@ async function scrapeData(city = "all") {
       articles = await tracyPressScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Tracy Press`);
 
-      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
+      await fetch(dbURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -111,7 +113,7 @@ async function scrapeData(city = "all") {
       articles = await riponScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Ripon Press`);
 
-      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
+      await fetch(dbURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -179,21 +181,20 @@ async function scrapeData(city = "all") {
 
       console.log(`Scraped a Total of ${articles.length} Articles. \n`);
 
-      await fetch("https://valleynews-dev.onrender.com/api/articles/", {
+      await fetch(dbURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
-        body: { articles: articles },
+        body: JSON.stringify(articles),
       }).catch((e) => console.log(`Error sending new articles to db: ${e}`));
       console.log(`Sent ${articles.length} articles to Database. \n`);
       break;
   }
 
-  console.log("Wrote Articles to articles.json");
   console.timeEnd();
 }
 
 // Updates Scraped Data object and will write to JSON file.
-scrapeData();
+scrapeData("modesto");
