@@ -201,4 +201,4 @@ async function scrapeData(city = "all") {
 }
 
 // Updates Scraped Data object and will write to JSON file.
-scrapeData("modesto");
+scrapeData("all");
