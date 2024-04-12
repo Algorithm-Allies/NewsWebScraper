@@ -13,8 +13,6 @@ const { getDataBaseURLS } = require("./getDataBaseURLS");
 
 const dbURL = process.env.API_URL;
 
-
-
 //// FUNCTIONS ////
 // @ desc Scrapes city data or all cities if all is passed as arg.
 // @ returns an array of objects where each object represents an article with the data we need as properties.
@@ -201,4 +199,4 @@ async function scrapeData(city = "all") {
 }
 
 // Updates Scraped Data object and will write to JSON file.
-scrapeData("all");
+scrapeData();

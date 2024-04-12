@@ -138,14 +138,14 @@ const riponScraper = async (dbURLS) => {
     objectToPush["heading"] = heading;
     objectToPush["subHeading"] = subHeading;
     objectToPush["author"] = author;
-    objectToPush["date"] = date;
+    objectToPush["date"] = datetime.toDateString();
     objectToPush["datetime"] = datetime;
     objectToPush["thumbnail"] = thumbnail.src
       ? thumbnail
       : image.src
       ? image
-      : null;
-    objectToPush["image"] = image.src ? image : null;
+      : { src: null, alt: null };
+    objectToPush["img"] = image.src ? image : { src: null, alt: null };
     objectToPush["paragraphs"] = paragraphs;
     objectToPush["business_id"] = null;
 
