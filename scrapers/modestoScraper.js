@@ -169,14 +169,16 @@ const modestoBeeScraper = async (dbURLS) => {
     articleObject["source"] = source;
     articleObject["publisher"] = publisher;
     articleObject["heading"] = heading;
-    articleObject["subheading"] = null;
+    articleObject["subHeading"] = null;
     articleObject["category"] = category;
     articleObject["subcategory"] = subcategory;
     articleObject["author"] = author;
-    articleObject["date"] = date;
+    articleObject["date"] = datetime.toDateString();
     articleObject["datetime"] = datetime;
-    articleObject["img"] = image;
-    articleObject["thumbnail"] = thumbnail;
+    articleObject["img"] = image ? image : { src: null, alt: null };
+    articleObject["thumbnail"] = thumbnail
+      ? thumbnail
+      : { src: null, alt: null };
     articleObject["paragraphs"] = paragraphs;
     articleObject["business_id"] = null;
 
