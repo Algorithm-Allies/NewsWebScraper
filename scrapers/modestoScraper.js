@@ -172,7 +172,9 @@ const modestoBeeScraper = async (dbURLS) => {
     articleObject["subHeading"] = null;
     articleObject["category"] = category;
     articleObject["subcategory"] = subcategory;
-    articleObject["author"] = author;
+    author.length < 50
+      ? (articleObject["author"] = author)
+      : (articleObject["author"] = publisher);
     articleObject["date"] = datetime.toDateString();
     articleObject["datetime"] = datetime;
     articleObject["img"] = image ? image : { src: null, alt: null };
