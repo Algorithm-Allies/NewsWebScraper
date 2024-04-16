@@ -202,7 +202,9 @@ const tracyPressScraper = async (dbURLS) => {
     objectToPush["subHeading"] = null;
     objectToPush["category"] = category;
     objectToPush["subcategory"] = subcategory;
-    objectToPush["author"] = author;
+    author.length < 50
+      ? (objectToPush["author"] = author)
+      : (objectToPush["author"] = publisher);
     objectToPush["date"] = datetime.toDateString();
     objectToPush["datetime"] = datetime;
     objectToPush["img"] = image.src ? image : { src: null, alt: null };

@@ -137,7 +137,9 @@ const riponScraper = async (dbURLS) => {
     objectToPush["subcategory"] = subcategory;
     objectToPush["heading"] = heading;
     objectToPush["subHeading"] = subHeading;
-    objectToPush["author"] = author;
+    author.length < 50
+      ? (objectToPush["author"] = author)
+      : (objectToPush["author"] = publisher);
     objectToPush["date"] = datetime.toDateString();
     objectToPush["datetime"] = datetime;
     objectToPush["thumbnail"] = thumbnail.src
