@@ -12,7 +12,7 @@ const { riponScraper } = require("./scrapers/riponScraper");
 const { getDataBaseURLS } = require("./getDataBaseURLS");
 
 const dbURL = process.env.API_URL;
-
+const createArticleURL = process.env.Create_URL;
 //// FUNCTIONS ////
 // @ desc Scrapes city data or all cities if all is passed as arg.
 // @ returns an array of objects where each object represents an article with the data we need as properties.
@@ -24,6 +24,7 @@ async function scrapeData(city = "all") {
   console.log("Getting Database URLS");
 
   const dbURLS = await getDataBaseURLS();
+
   console.log("Got database URLS.\n");
 
   switch (city) {
@@ -33,7 +34,7 @@ async function scrapeData(city = "all") {
         `Scraped ${articles.length} articles from The Turlock Journal`
       );
 
-      await fetch(dbURL, {
+      await fetch(createArticleURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -49,7 +50,7 @@ async function scrapeData(city = "all") {
       articles = await modestoBeeScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from The Modesto Bee`);
 
-      await fetch(dbURL, {
+      await fetch(createArticleURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -67,7 +68,7 @@ async function scrapeData(city = "all") {
         `Scraped ${articles.length} articles from The Oakdale Leader`
       );
 
-      await fetch(dbURL, {
+      await fetch(createArticleURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -83,7 +84,7 @@ async function scrapeData(city = "all") {
       articles = await riverbankNewsScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Riverbank News`);
 
-      await fetch(dbURL, {
+      await fetch(createArticleURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -99,7 +100,7 @@ async function scrapeData(city = "all") {
       articles = await tracyPressScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Tracy Press`);
 
-      await fetch(dbURL, {
+      await fetch(createArticleURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -115,7 +116,7 @@ async function scrapeData(city = "all") {
       articles = await riponScraper(dbURLS);
       console.log(`Scraped ${articles.length} articles from Ripon Press`);
 
-      await fetch(dbURL, {
+      await fetch(createArticleURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -183,7 +184,7 @@ async function scrapeData(city = "all") {
 
       console.log(`Scraped a Total of ${articles.length} Articles. \n`);
 
-      await fetch(dbURL, {
+      await fetch(createArticleURL, {
         method: "POST",
         headers: {
           Accept: "application/json",
