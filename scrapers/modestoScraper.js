@@ -21,6 +21,8 @@ const getModestoURLS = async (dbURLS) => {
   const localNewsArticleURLS = new Set();
   const highSchoolArticleURLS = new Set();
 
+  const allURLS = new Set();
+
   // URLS to scrape for article URLS
   const crimeURL = "http://www.modbee.com/news/local/crime";
   const govURL = "http://www.modbee.com/news/politics-government/election";
@@ -61,11 +63,11 @@ const getModestoURLS = async (dbURLS) => {
   const $highSchool = cheerio.load(highSchoolDOM);
 
   // Populating Sets with URLS and thumbnailArr with thumbnail objects.
-  getURLS($crime, thumbnailArr, crimeArticleURLS);
-  getURLS($gov, thumbnailArr, govArticleURLS);
-  getURLS($ed, thumbnailArr, edArticleURLS);
-  getURLS($localNews, thumbnailArr, localNewsArticleURLS);
-  getURLS($highSchool, thumbnailArr, highSchoolArticleURLS);
+  getURLS($crime, thumbnailArr, crimeArticleURLS, allURLS);
+  getURLS($gov, thumbnailArr, govArticleURLS, allURLS);
+  getURLS($ed, thumbnailArr, edArticleURLS, allURLS);
+  getURLS($localNews, thumbnailArr, localNewsArticleURLS, allURLS);
+  getURLS($highSchool, thumbnailArr, highSchoolArticleURLS, allURLS);
 
   // Populating GLOBAL object of subcategorized URLS.
   subcategoriesObj["CRIME"] = Array.from(crimeArticleURLS);
@@ -172,9 +174,7 @@ const modestoBeeScraper = async (dbURLS) => {
     articleObject["subHeading"] = null;
     articleObject["category"] = category;
     articleObject["subcategory"] = subcategory;
-    author.length < 50
-      ? (articleObject["author"] = author)
-      : (articleObject["author"] = publisher);
+    articleObject["author"] = author && author.length < 50 ? author : publisher;
     articleObject["date"] = datetime.toDateString();
     articleObject["datetime"] = datetime;
     articleObject["img"] = image ? image : { src: null, alt: null };
@@ -194,11 +194,14 @@ const modestoBeeScraper = async (dbURLS) => {
 };
 
 // Populates URL Sets and thumbnails array according to cheerio obj passed in.
-function getURLS($, thumbnailArr, toAdd) {
+function getURLS($, thumbnailArr, toAdd, allURLS) {
   // Gets URLS and thumbnails for articles.
   $("a.image-link-macro").each((i, element) => {
     const anchor = $(element);
-    toAdd.add(anchor.attr("href"));
+    if (!allURLS.has(anchor.attr("href"))) {
+      allURLS.add(anchor.attr("href"));
+      toAdd.add(anchor.attr("href"));
+    }
     const thumbnailSrc = anchor.find("img").attr("src");
     const thumbnailAlt = anchor.find("img").attr("alt") || null;
     thumbnailArr.push({ src: thumbnailSrc, alt: thumbnailAlt });

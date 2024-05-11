@@ -20,6 +20,8 @@ const getRiverbankURLS = async (dbURLS) => {
   const localSportsArticleURLS = new Set();
   const highSchoolArticleURLS = new Set();
 
+  const allURLS = new Set();
+
   // Pages to scrape for articles.
   const crimeURL = "https://www.theriverbanknews.com/news/crime/";
   const govURL = "https://www.theriverbanknews.com/news/government/";
@@ -66,12 +68,12 @@ const getRiverbankURLS = async (dbURLS) => {
   const $highSchool = cheerio.load(highSchoolDOM);
 
   // Populating Sets with article URLS and thumbnailArr with thumbnail objects.
-  getURLS($crime, thumbnailArr, crimeArticleURLS);
-  getURLS($gov, thumbnailArr, govArticleURLS);
-  getURLS($ed, thumbnailArr, edArticleURLS);
-  getURLS($localNews, thumbnailArr, localNewsArticleURLS);
-  getURLS($localSports, thumbnailArr, localSportsArticleURLS);
-  getURLS($highSchool, thumbnailArr, highSchoolArticleURLS);
+  getURLS($crime, thumbnailArr, crimeArticleURLS, allURLS);
+  getURLS($gov, thumbnailArr, govArticleURLS, allURLS);
+  getURLS($ed, thumbnailArr, edArticleURLS, allURLS);
+  getURLS($localNews, thumbnailArr, localNewsArticleURLS, allURLS);
+  getURLS($localSports, thumbnailArr, localSportsArticleURLS, allURLS);
+  getURLS($highSchool, thumbnailArr, highSchoolArticleURLS, allURLS);
 
   // Populating GLOBAL object of subcategorized URLS.
   subcategoriesObj["CRIME"] = Array.from(crimeArticleURLS);
@@ -193,11 +195,15 @@ const riverbankNewsScraper = async (dbURLS) => {
 };
 
 // Populates URL Sets and thumbnails array according to cheerio obj passed in.
-function getURLS($, thumbnailArr, toAdd) {
+function getURLS($, thumbnailArr, toAdd, allURLS) {
   // Gets URLS and thumbnails for articles.
   $("a.anvil-images__image-container").each((i, element) => {
     const anchor = $(element);
-    toAdd.add(anchor.attr("href"));
+
+    if (!allURLS.has(anchor.attr("href"))) {
+      allURLS.add(anchor.attr("href"));
+      toAdd.add(anchor.attr("href"));
+    }
     const $thumbnail = anchor.find("img.anvil-images__image--main-article");
     const { src, alt } = $thumbnail.attr();
     const thumbnail = { src, alt };
