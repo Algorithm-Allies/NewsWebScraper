@@ -169,15 +169,20 @@ const modestoBeeScraper = async (dbURLS) => {
     articleObject["source"] = source;
     articleObject["publisher"] = publisher;
     articleObject["heading"] = heading;
-    articleObject["subheading"] = null;
+    articleObject["subHeading"] = null;
     articleObject["category"] = category;
     articleObject["subcategory"] = subcategory;
-    articleObject["author"] = author;
-    articleObject["date"] = date;
+    author.length < 50
+      ? (articleObject["author"] = author)
+      : (articleObject["author"] = publisher);
+    articleObject["date"] = datetime.toDateString();
     articleObject["datetime"] = datetime;
-    articleObject["image"] = image;
-    articleObject["thumbnail"] = thumbnail;
+    articleObject["img"] = image ? image : { src: null, alt: null };
+    articleObject["thumbnail"] = thumbnail
+      ? thumbnail
+      : { src: null, alt: null };
     articleObject["paragraphs"] = paragraphs;
+    articleObject["business_id"] = null;
 
     // Edge case: Some modesto articles had no title and were still being worked on.
     if (articleObject.heading) {

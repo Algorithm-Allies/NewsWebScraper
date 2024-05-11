@@ -166,12 +166,17 @@ const oakdaleLeaderScraper = async (dbURLS) => {
     objectToPush["subHeading"] = subHeading;
     objectToPush["category"] = category;
     objectToPush["subcategory"] = subcategory;
-    objectToPush["author"] = author;
-    objectToPush["date"] = date;
+    author.length < 50
+      ? (objectToPush["author"] = author)
+      : (objectToPush["author"] = publisher);
+    objectToPush["date"] = datetime.toDateString();
     objectToPush["datetime"] = datetime;
-    objectToPush["img"] = image;
-    objectToPush["thumbnail"] = thumbnails[i];
+    objectToPush["img"] = image ? image : { src: null, alt: null };
+    objectToPush["thumbnail"] = thumbnails[i]
+      ? thumbnails[i]
+      : { src: null, alt: null };
     objectToPush["paragraphs"] = paragraphs;
+    objectToPush["business_id"] = null;
 
     articles.push(objectToPush);
   }

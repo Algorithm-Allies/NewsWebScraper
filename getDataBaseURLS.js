@@ -4,7 +4,7 @@ async function getDataBaseURLS() {
 
   // Attempting to fetch DB URLS a few times due to Render's cold start.
   while (attempts) {
-    dbURLS = await fetch("https://valleynews.onrender.com/api/articles/urls")
+    dbURLS = await fetch(process.env.API_URL)
       .then((res) => {
         if (res.ok) {
           attempts = 0;
