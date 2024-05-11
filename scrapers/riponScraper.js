@@ -3,6 +3,9 @@ const cheerio = require("cheerio");
 const moment = require("moment");
 const { filterURLS } = require("../filterURLS");
 
+// Global object of subcategorized URLS.
+const subcategoriesObj = {};
+
 // @ desc Scrapes Ripon Leader for article URLS.
 // @ returns array of article URLS to scrape.
 const getRiponURLS = async (dbURLS) => {
@@ -10,6 +13,9 @@ const getRiponURLS = async (dbURLS) => {
 
   // An array to populate with thumbnail objects.
   let thumbnailArr = [];
+
+  // Set to keep track of duplicates across different categories.
+  const allURLS = new Set();
 
   // Creating sets to populate with unique URLS.
   const edArticleURLS = new Set();
@@ -44,11 +50,10 @@ const getRiponURLS = async (dbURLS) => {
   const $highSchool = cheerio.load(highSchoolDOM);
 
   // Populating Sets with URLS and thumbnailsArr with thumbnail objects.
-  getURLS($ed, thumbnailArr, edArticleURLS);
-  getURLS($localNews, thumbnailArr, localNewsArticleURLS);
-  getURLS($highSchool, thumbnailArr, highSchoolArticleURLS);
+  getURLS($ed, thumbnailArr, edArticleURLS, allURLS);
+  getURLS($localNews, thumbnailArr, localNewsArticleURLS, allURLS);
+  getURLS($highSchool, thumbnailArr, highSchoolArticleURLS, allURLS);
 
-  // Populating GLOBAL object of subcategorized URLS.
   subcategoriesObj["EDUCATION"] = Array.from(edArticleURLS);
   subcategoriesObj["LOCAL NEWS"] = Array.from(localNewsArticleURLS);
   subcategoriesObj["HIGH SCHOOL SPORTS"] = Array.from(highSchoolArticleURLS);
@@ -156,11 +161,15 @@ const riponScraper = async (dbURLS) => {
 };
 
 // Populates URL Sets and thumbnails array according to cheerio obj passed in.
-function getURLS($, thumbnailArr, toAdd) {
+function getURLS($, thumbnailArr, toAdd, allURLS) {
   // Gets URLS and thumbnails for articles.
   $("a.tnt-asset-link").each((i, element) => {
     const anchor = $(element);
-    if (anchor.attr("href") !== "{{url}}") {
+    if (
+      anchor.attr("href") !== "{{url}}" &&
+      !allURLS.has(anchor.attr("href"))
+    ) {
+      allURLS.add(anchor.attr("href"));
       toAdd.add("https://www.riponpress.com" + anchor.attr("href"));
     }
     let image = {
