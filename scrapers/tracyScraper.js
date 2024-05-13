@@ -19,6 +19,8 @@ const getTracyURLS = async (dbURLS) => {
   const localSportsArticleURLS = new Set();
   const highSchoolSportsArticleURLS = new Set();
 
+  const allURLS = new Set();
+
   // URLS to scrape.
   const crimeNewsURL =
     "https://www.ttownmedia.com/tracy_press/news/law_and_order/";
@@ -74,12 +76,12 @@ const getTracyURLS = async (dbURLS) => {
   const $localSports = cheerio.load(localSportsDOM);
 
   // Getting URLS.
-  getURLS($crime, crimeArticleURLS);
-  getURLS($gov, govArticleURLS);
-  getURLS($ed, edArticleURLS);
-  getURLS($localNews, localNewsArticleURLS);
-  getURLS($highSchoolSports, highSchoolSportsArticleURLS);
-  getURLS($localSports, localSportsArticleURLS);
+  getURLS($crime, crimeArticleURLS, allURLS);
+  getURLS($gov, govArticleURLS, allURLS);
+  getURLS($ed, edArticleURLS, allURLS);
+  getURLS($localNews, localNewsArticleURLS, allURLS);
+  getURLS($highSchoolSports, highSchoolSportsArticleURLS, allURLS);
+  getURLS($localSports, localSportsArticleURLS, allURLS);
 
   // Populating GLOBAL object of subcategorized URLS.
   subcategoriesObj["CRIME"] = Array.from(crimeArticleURLS);
@@ -248,7 +250,7 @@ function getCategories(source) {
 }
 
 // Populates URL SETS based on cheerio object passed in.
-function getURLS($, addTo) {
+function getURLS($, addTo, allURLS) {
   $("div.card-container")
     .find("a.tnt-asset-link")
     .each((i, element) => {
@@ -256,7 +258,11 @@ function getURLS($, addTo) {
       const url = $anchor.attr("href").includes("https://ttownmedia.com")
         ? $anchor.attr("href")
         : "https://www.ttownmedia.com" + $anchor.attr("href");
-      addTo.add(url);
+
+      if (!allURLS.has(url)) {
+        allURLS.add(url);
+        addTo.add(url);
+      }
     });
 }
 

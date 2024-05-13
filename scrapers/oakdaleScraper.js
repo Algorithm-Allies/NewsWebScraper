@@ -20,6 +20,8 @@ const getOakdaleURLS = async (dbURLS) => {
   const localNewsArticleURLS = new Set();
   const localSportsArticleURLS = new Set();
 
+  const allURLS = new Set();
+
   // Main URLS to scrape.
   const crimeURL = "https://www.oakdaleleader.com/news/crime";
   const govURL = "https://www.oakdaleleader.com/news/government";
@@ -58,11 +60,11 @@ const getOakdaleURLS = async (dbURLS) => {
   const $localSports = cheerio.load(localSportsDOM);
 
   // Populating Sets with URLS, and populating thumbnailArr.
-  getURLS($crime, thumbnailArr, crimeArticleURLS);
-  getURLS($gov, thumbnailArr, govArticleURLS);
-  getURLS($ed, thumbnailArr, edArticleURLS);
-  getURLS($localNews, thumbnailArr, localNewsArticleURLS);
-  getURLS($localSports, thumbnailArr, localSportsArticleURLS);
+  getURLS($crime, thumbnailArr, crimeArticleURLS, allURLS);
+  getURLS($gov, thumbnailArr, govArticleURLS, allURLS);
+  getURLS($ed, thumbnailArr, edArticleURLS, allURLS);
+  getURLS($localNews, thumbnailArr, localNewsArticleURLS, allURLS);
+  getURLS($localSports, thumbnailArr, localSportsArticleURLS, allURLS);
 
   // Populating GLOBAL object of subcategorized URLS.
   subcategoriesObj["CRIME"] = Array.from(crimeArticleURLS);
@@ -184,11 +186,14 @@ const oakdaleLeaderScraper = async (dbURLS) => {
 };
 
 // Populates URL Sets and thumbnails array according to cheerio obj passed in.
-function getURLS($, thumbnailArr, toAdd) {
+function getURLS($, thumbnailArr, toAdd, allURLS) {
   // Gets URLS and thumbnails for articles.
   $("a.anvil-images__image-container").each((i, element) => {
     const anchor = $(element);
-    toAdd.add(anchor.attr("href"));
+    if (!allURLS.has(anchor.attr("href"))) {
+      allURLS.add(anchor.attr("href"));
+      toAdd.add(anchor.attr("href"));
+    }
     const $thumbnail = anchor.find("img.anvil-images__image--main-article");
     const { src, alt } = $thumbnail.attr();
     const thumbnail = { src, alt };
